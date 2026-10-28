@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart QR 생성기 | 국립한국해양대학교</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="logo-link" href="https://kmou.ac.kr" target="_blank" rel="noopener" title="국립한국해양대학교 홈페이지로 이동">
+      <img src="assets/images/kmou-logo.png" alt="국립한국해양대학교">
+    </a>
+    <div class="header-right">
+      <h1 class="site-title">Smart QR <span>생성기</span></h1>
+      <button type="button" class="history-btn" id="historyBtn" aria-haspopup="dialog" aria-controls="historyDrawer">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 1-8.5 6h2.2A7 7 0 1 0 7 7.1L9 9H3V3l2.6 2.6A9 9 0 0 1 12 3zm-1 4h2v4.6l3.4 2-1 1.7L11 12.7z"/></svg>
+        최근 기록
+        <span class="badge" id="historyCount" hidden>0</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="stage" id="stage">
+    <section class="workspace" id="workspace" aria-live="polite">
+      <div class="qr-area">
+        <button type="button" class="qr-card" id="qrCard" title="클릭하면 JPG로 저장됩니다">
+          <canvas id="qrCanvas" width="1024" height="1024"></canvas>
+        </button>
+        <p class="qr-hint">QR 코드를 클릭하면 <strong>.jpg</strong> 파일로 저장됩니다</p>
+        <p class="qr-summary" id="qrSummary"></p>
+      </div>
+
+      <aside class="style-panel" aria-label="QR 꾸미기">
+        <h2>꾸미기</h2>
+
+        <div class="option-group">
+          <h3>색상</h3>
+          <div class="swatches" id="colorSwatches">
+            <button type="button" class="swatch" data-color="#111111" style="--c:#111111" title="블랙"></button>
+            <button type="button" class="swatch" data-color="#1d2a8a" style="--c:#1d2a8a" title="해양대 네이비"></button>
+            <button type="button" class="swatch" data-color="#0a7cc4" style="--c:#0a7cc4" title="오션 블루"></button>
+            <button type="button" class="swatch" data-color="#0f6b5c" style="--c:#0f6b5c" title="딥 그린"></button>
+            <button type="button" class="swatch" data-color="#121b5e,#0a7cc4" style="--c:linear-gradient(135deg,#121b5e,#0a7cc4)" title="심해 그라데이션"></button>
+            <button type="button" class="swatch" data-color="#0a6fb0,#0f9e8e" style="--c:linear-gradient(135deg,#0a6fb0,#0f9e8e)" title="파도 그라데이션"></button>
+            <button type="button" class="swatch" data-color="#7a1838,#c4521c" style="--c:linear-gradient(135deg,#7a1838,#c4521c)" title="노을 그라데이션"></button>
+            <label class="swatch swatch-custom" title="직접 고르기">
+              <input type="color" id="customColor" value="#3b2a8a">
+            </label>
+          </div>
+        </div>
+
+        <div class="option-group">
+          <h3>점 모양</h3>
+          <div class="segmented" data-option="dot">
+            <button type="button" data-value="square" title="사각">
+              <svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8"/><rect x="13" y="13" width="8" height="8"/><rect x="13" y="3" width="8" height="8"/></svg>
+            </button>
+            <button type="button" data-value="liquid" title="연결형">
+              <svg viewBox="0 0 24 24"><path d="M7 3h10a4 4 0 0 1 4 4v10a4 4 0 0 1-8 0v-4H7a4 4 0 0 1 0-8z"/></svg>
+            </button>
+            <button type="button" data-value="rounded" title="둥근 사각">
+              <svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="2.5"/><rect x="13" y="13" width="8" height="8" rx="2.5"/><rect x="13" y="3" width="8" height="8" rx="2.5"/></svg>
+            </button>
+            <button type="button" data-value="dot" title="원형">
+              <svg viewBox="0 0 24 24"><circle cx="7" cy="7" r="4"/><circle cx="17" cy="17" r="4"/><circle cx="17" cy="7" r="4"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="option-group">
+          <h3>모서리 모양</h3>
+          <div class="segmented" data-option="eye">
+            <button type="button" data-value="square" title="사각">
+              <svg viewBox="0 0 24 24"><path fill-rule="evenodd" d="M2 2h20v20H2zm3 3v14h14V5z"/><rect x="8" y="8" width="8" height="8"/></svg>
+            </button>
+            <button type="button" data-value="rounded" title="둥근 사각">
+              <svg viewBox="0 0 24 24"><path fill-rule="evenodd" d="M8 2h8a6 6 0 0 1 6 6v8a6 6 0 0 1-6 6H8a6 6 0 0 1-6-6V8a6 6 0 0 1 6-6zm0 3a3 3 0 0 0-3 3v8a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3V8a3 3 0 0 0-3-3z"/><rect x="8" y="8" width="8" height="8" rx="2.5"/></svg>
+            </button>
+            <button type="button" data-value="circle" title="원형">
+              <svg viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20zm0 3a7 7 0 1 0 0 14 7 7 0 0 0 0-14z"/><circle cx="12" cy="12" r="4"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <label class="toggle">
+          <input type="checkbox" id="emblemToggle">
+          <span class="toggle-track"><span class="toggle-thumb"></span></span>
+          <span class="toggle-label">중앙에 해양대 엠블럼</span>
+        </label>
+
+        <p class="contrast-warn" id="contrastWarn" hidden>색이 너무 밝아서 스캔이 잘 안 될 수 있어요.</p>
+      </aside>
+    </section>
+
+    <section class="input-panel" id="inputPanel">
+      <button type="button" class="start-btn" id="startBtn">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3h8v8H3zm2 2v4h4V5zm8-2h8v8h-8zm2 2v4h4V5zM3 13h8v8H3zm2 2v4h4v-4zm8-2h2v2h-2zm4 0h4v2h-2v2h-2zm-4 4h2v4h-2zm4 2h4v2h-4zm2-2h2v2h-2z"/></svg>
+        QR 만들기
+      </button>
+
+      <form class="qr-form" id="qrForm" novalidate>
+        <div class="type-tabs" role="tablist" aria-label="QR 종류">
+          <button type="button" role="tab" data-type="url">URL</button>
+          <button type="button" role="tab" data-type="contact">연락처</button>
+          <button type="button" role="tab" data-type="email">이메일</button>
+          <button type="button" role="tab" data-type="sms">문자</button>
+        </div>
+
+        <div class="form-body">
+          <div class="fields" data-type="url">
+            <input type="text" name="url" placeholder="https://example.com" autocomplete="off" spellcheck="false" inputmode="url" aria-label="URL">
+          </div>
+
+          <div class="fields cols-2" data-type="contact">
+            <input type="text" name="name" placeholder="이름 *" autocomplete="off" aria-label="이름">
+            <input type="tel" name="phone" placeholder="휴대폰 번호" autocomplete="off" aria-label="휴대폰 번호">
+            <input type="email" name="contactEmail" placeholder="이메일" autocomplete="off" aria-label="이메일">
+            <input type="text" name="org" placeholder="소속 (예: 국립한국해양대학교)" autocomplete="off" aria-label="소속">
+            <input type="text" name="title" placeholder="직함 / 학과" autocomplete="off" aria-label="직함">
+            <input type="text" name="website" placeholder="웹사이트" autocomplete="off" aria-label="웹사이트">
+          </div>
+
+          <div class="fields cols-2" data-type="email">
+            <input type="email" name="to" placeholder="받는 사람 이메일 *" autocomplete="off" aria-label="받는 사람">
+            <input type="text" name="subject" placeholder="제목" autocomplete="off" aria-label="제목">
+            <input type="text" name="body" class="span-2" placeholder="내용" autocomplete="off" aria-label="내용">
+          </div>
+
+          <div class="fields cols-2" data-type="sms">
+            <input type="tel" name="smsTo" placeholder="받는 번호 *" autocomplete="off" aria-label="받는 번호">
+            <input type="text" name="message" placeholder="메시지" autocomplete="off" aria-label="메시지">
+          </div>
+
+          <button type="submit" class="confirm-btn">확인</button>
+        </div>
+      </form>
+      <p class="error-msg" id="errorMsg"></p>
+    </section>
+  </main>
+
+  <footer class="site-footer">© National Korea Maritime &amp; Ocean University</footer>
+
+  <div class="drawer-backdrop" id="drawerBackdrop" hidden></div>
+  <aside class="history-drawer" id="historyDrawer" role="dialog" aria-label="최근 생성 기록" aria-hidden="true">
+    <div class="drawer-head">
+      <h2>최근 기록</h2>
+      <button type="button" class="icon-btn" id="drawerClose" aria-label="닫기">
+        <svg viewBox="0 0 24 24"><path d="M6.4 5 12 10.6 17.6 5 19 6.4 13.4 12l5.6 5.6-1.4 1.4-5.6-5.6L6.4 19 5 17.6l5.6-5.6L5 6.4z"/></svg>
+      </button>
+    </div>
+    <ul class="history-list" id="historyList"></ul>
+    <p class="history-empty" id="historyEmpty">아직 만든 QR 코드가 없어요.</p>
+    <button type="button" class="clear-btn" id="clearHistory">기록 전체 삭제</button>
+  </aside>
+
+  <script src="assets/js/qrcode.js"></script>
+  <script src="assets/js/emblem.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
